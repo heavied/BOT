@@ -29,7 +29,3 @@ def whatsapp():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-@app.route('/')
-def home():
-    return "Hello, world! This is the home route."
