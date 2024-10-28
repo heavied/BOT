@@ -4,7 +4,7 @@ from twilio.twiml.messaging_response import MessagingResponse
 import os
 
 app = Flask(__name__)
-openai.api_key = os.getenv("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")
+openai.api_key = os.getenv("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")
 
 @app.route('/whatsapp', methods=['POST'])
 def whatsapp():
