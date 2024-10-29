@@ -1,13 +1,16 @@
 from flask import Flask, request
 import openai
 from twilio.twiml.messaging_response import MessagingResponse
-import os
 
 app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = 'sk-2DeorHiN1irhWpY2jnOy1SCzfEyvB7LxAuDmhSZ7g4T3BlbkFJQYBJbibQui5dn_YQRhLd8q8eHegYx2K9mIywq0PWsA'
 
-@app.route('/whatsapp', methods=['POST'])
+@app.route('/whatsapp', methods=['GET', 'POST'])
 def whatsapp():
+    if request.method == 'GET':
+        return "WhatsApp route is working!"  # Add this for testing
+
+    # Rest of your code
     incoming_msg = request.values.get('Body', '').strip()
     response = MessagingResponse()
     reply = response.message()
@@ -20,11 +23,14 @@ def whatsapp():
         )
         reply.body(completion.choices[0].text.strip())
     except Exception as e:
-        print(f"OpenAI API error: {e}")  # Log the exact error message
-        reply.body(f"Error: {str(e)}")  # Send back the exact error for debugging
+        reply.body("Error connecting to ChatGPT. Try again later.")
 
     return str(response)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)), debug=True)
+    app.run(debug=True)
+
+@app.route('/')
+def home():
+    return "Hello, world! This is the home route."
 
