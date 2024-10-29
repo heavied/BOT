@@ -19,12 +19,12 @@ def whatsapp():
     logging.info(f"Received message: {incoming_msg}")
 
     try:
-        completion = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=incoming_msg,
+        completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # use "gpt-4" if available and desired
+            messages=[{"role": "user", "content": incoming_msg}],
             max_tokens=150
         )
-        response_text = completion.choices[0].text.strip()
+        response_text = completion['choices'][0]['message']['content'].strip()
         logging.info(f"OpenAI response: {response_text}")
         reply.body(response_text)
     except Exception as e:
@@ -35,8 +35,3 @@ def whatsapp():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-@app.route('/')
-def home():
-    return "Hello, world! This is the home route."
-
