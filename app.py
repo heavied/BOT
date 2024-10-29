@@ -3,6 +3,8 @@ import openai
 from twilio.twiml.messaging_response import MessagingResponse
 import os
 import logging
+import traceback
+
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -25,8 +27,10 @@ def whatsapp():
             messages=[{"role": "user", "content": incoming_msg}],
             max_tokens=150
         )
+        
         response_text = completion['choices'][0]['message']['content'].strip()
         logging.info(f"OpenAI response: {response_text}")
+        logging.error("Detailed Error:", traceback.format_exc())
         reply.body(response_text)
     except Exception as e:
         logging.error(f"Error connecting to OpenAI API: {e}", exc_info=True)
