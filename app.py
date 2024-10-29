@@ -2,19 +2,21 @@ from flask import Flask, request
 import openai
 from twilio.twiml.messaging_response import MessagingResponse
 import os
+import logging
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-@app.route('/whatsapp', methods=['GET', 'POST'])
-def whatsapp():
-    if request.method == 'GET':
-        return "WhatsApp route is working!"  # Add this for testing
+# Set up logging
+logging.basicConfig(level=logging.INFO)
 
-    # Rest of your code
+@app.route('/whatsapp', methods=['POST'])
+def whatsapp():
     incoming_msg = request.values.get('Body', '').strip()
     response = MessagingResponse()
     reply = response.message()
+
+    logging.info(f"Received message: {incoming_msg}")
 
     try:
         completion = openai.Completion.create(
@@ -22,8 +24,11 @@ def whatsapp():
             prompt=incoming_msg,
             max_tokens=150
         )
-        reply.body(completion.choices[0].text.strip())
+        response_text = completion.choices[0].text.strip()
+        logging.info(f"OpenAI response: {response_text}")
+        reply.body(response_text)
     except Exception as e:
+        logging.error("Error connecting to OpenAI API", exc_info=True)
         reply.body("Error connecting to ChatGPT. Try again later.")
 
     return str(response)
