@@ -7,8 +7,10 @@ import traceback
 
 
 app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
+client = OpenAI(
+    # This is the default and can be omitted
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
